@@ -78,4 +78,18 @@ router.post(
   }
 );
 
+router.get("/logout", async (req, res) => {
+  try {
+    const { userStatus } = req;
+    if (!userStatus.loggedIn) return res.redirect("/not-found");
+    res.clearCookie("rtchat_auth_token");
+    res.redirect("/auth/login");
+  } catch (error) {
+    res.render("error", {
+      error: "Server side error occurred",
+      message: error
+    });
+  }
+});
+
 module.exports = router;
