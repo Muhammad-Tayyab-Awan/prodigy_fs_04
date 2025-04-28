@@ -1,5 +1,18 @@
 html
   head
-    title= "Tayyab"
-  body
-    h1= "Hi"
+    title= "Real Time Chat App"
+    link(rel="shortcut icon" href="/icon.svg" type="image/svg")
+    link(rel="stylesheet" href="/styles.css")
+    script(src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4")
+  body(class='bg-[#f5deb3] flex justify-center items-center')
+    div(class='h-[100vh] w-[80%] relative')
+      div(class="sticky top-0 w-full text-center py-2 text-xl bg-white/50 backdrop-blur-[2px] shadow-sm shadow-black") Enjoy chat with unlimited users
+        div(class="py-0.5 px-2 h-auto w-full flex justify-between items-center")
+          h1(class="text-xl font-medium text-[#f57c50]",id=`${userId}`)= `Hi, ${username}`
+          a(href="/auth/logout" class="bg-black text-white p-1 rounded-sm cursor-pointer text-sm") Logout
+      div(class='flex flex-col justify-center items-center h-[calc(100vh-4.75rem)] w-full')
+        div(class="h-[90%] w-full overflow-y-auto overflow-x-hidden") hwll
+        form(class="h-[10%] w-full bg-white flex items-center",id="message-form")
+          textarea(placeholder="Enter message here",maxlength=150,class="w-full h-full focus-visible:outline-hidden p-2 resize-none bg-yellow-200 text-sm",name="message",required)
+          input(type="image",src="/send.svg",class="h-full p-1 bg-yellow-200 focus-visible:outline-hidden")
+    div(class='bg-[#f57c50] h-full w-[20%]') hi
