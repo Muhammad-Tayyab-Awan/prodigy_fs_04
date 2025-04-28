@@ -23,7 +23,8 @@ const verifyLogin = (req, res, next) => {
       }
       req.userStatus = {
         loggedIn: true,
-        userId: id
+        userId: id,
+        username: userExist.username
       };
       return next();
     });

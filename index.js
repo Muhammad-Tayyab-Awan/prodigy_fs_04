@@ -21,7 +21,19 @@ app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "pug");
 
 app.get("/", (req, res) => {
-  res.render("index");
+  try {
+    const { userStatus } = req;
+    if (!userStatus.loggedIn) return res.redirect("/auth/login");
+    res.render("index", {
+      userId: userStatus.userId,
+      username: userStatus.username
+    });
+  } catch (error) {
+    res.render("error", {
+      error: "Server side error occurred",
+      message: error
+    });
+  }
 });
 
 app.use("/auth", authRouter);
