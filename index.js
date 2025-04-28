@@ -3,6 +3,8 @@ const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const express = require("express");
 const path = require("path");
+const connectDB = require("./utils/connectDB");
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -17,7 +19,8 @@ app.get("/", (req, res) => {
   res.render("index");
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.clear();
+  await connectDB();
   console.log(`Server running on http://localhost:${PORT}`);
 });
