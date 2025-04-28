@@ -5,6 +5,7 @@ const express = require("express");
 const path = require("path");
 const connectDB = require("./utils/connectDB");
 const authRouter = require("./routes/auth");
+const verifyLogin = require("./middlewares/verifyLogin");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -12,6 +13,7 @@ const PORT = process.env.PORT || 3000;
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use(verifyLogin);
 
 app.use(express.static("public"));
 
