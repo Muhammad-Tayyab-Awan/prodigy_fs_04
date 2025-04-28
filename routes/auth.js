@@ -78,6 +78,70 @@ router.post(
   }
 );
 
+router.get("/login", async (req, res) => {
+  try {
+    const { userStatus } = req;
+    if (userStatus.loggedIn) return res.redirect("/");
+    res.render("login");
+  } catch (error) {
+    res.render("error", {
+      error: "Server side error occurred",
+      message: error
+    });
+  }
+});
+
+router.post(
+  "/login",
+  [
+    body("username")
+      .matches(/^(?=.*[a-z])(?=.*\d)[a-z\d]+$/)
+      .isLength({ min: 6, max: 20 }),
+    body("password")
+      .isStrongPassword({
+        minLowercase: 3,
+        minUppercase: 2,
+        minNumbers: 2,
+        minSymbols: 1,
+        minLength: 8
+      })
+      .isLength({ max: 18 })
+  ],
+  async (req, res) => {
+    try {
+      const { userStatus } = req;
+      if (userStatus.loggedIn) return res.redirect("/");
+      const result = validationResult(req);
+      if (!result.isEmpty())
+        return res.render("error", {
+          error: "Invalid request",
+          message: "Please provide correct data"
+        });
+      const { username, password } = req.body;
+      const userExist = await User.findOne({ username: username });
+      if (!userExist)
+        return res.render("error", {
+          error: "Invalid request",
+          message: "Please provide correct credentials"
+        });
+      const passwordMatched = bcrypt.compareSync(password, userExist.password);
+      if (!passwordMatched)
+        return res.render("error", {
+          error: "Invalid request",
+          message: "Please provide correct credentials"
+        });
+      const authToken = jwt.sign({ id: userExist.id.toString() }, jwtSecret);
+      res.cookie("rtchat_auth_token", authToken, { maxAge: 604800000 });
+      res.redirect("/");
+    } catch (error) {
+      res.render("error", {
+        error: "Server side error occurred",
+        message: error
+      });
+    }
+  }
+);
+
 router.get("/logout", async (req, res) => {
   try {
     const { userStatus } = req;
