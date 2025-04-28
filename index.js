@@ -4,6 +4,7 @@ const cookieParser = require("cookie-parser");
 const express = require("express");
 const path = require("path");
 const connectDB = require("./utils/connectDB");
+const authRouter = require("./routes/auth");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -12,11 +13,21 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+app.use(express.static("public"));
+
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "pug");
 
 app.get("/", (req, res) => {
   res.render("index");
+});
+
+app.use("/auth", authRouter);
+
+app.all(/.*/, (req, res) => {
+  res.render("not-found", {
+    error: "Page not found"
+  });
 });
 
 app.listen(PORT, async () => {
