@@ -59,13 +59,18 @@ io.use(verifySocketLogin);
 let onlineUsers = [];
 
 io.on("connection", (socket) => {
-  console.log("Connected", socket.username);
   const userJoined = {
     username: socket.username,
     userId: socket.userId,
     id: socket.id
   };
   onlineUsers.push(userJoined);
+  socket.emit("get_online_users", onlineUsers);
+  socket.broadcast.emit("get_online_users", onlineUsers);
+  socket.on("disconnect", () => {
+    onlineUsers = onlineUsers.filter((user) => user.id !== socket.id);
+    socket.broadcast.emit("get_online_users", onlineUsers);
+  });
 });
 
 server.listen(PORT, async () => {
