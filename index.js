@@ -59,12 +59,21 @@ io.use(verifySocketLogin);
 let onlineUsers = [];
 
 io.on("connection", (socket) => {
-  const userJoined = {
-    username: socket.username,
-    userId: socket.userId,
-    id: socket.id
-  };
-  onlineUsers.push(userJoined);
+  const userExist = onlineUsers.find(
+    (user) => user.username === socket.username
+  );
+  if (userExist) {
+    socket.emit("already_online");
+    socket.disconnect(true);
+    return;
+  } else {
+    const userJoined = {
+      username: socket.username,
+      userId: socket.userId,
+      id: socket.id
+    };
+    onlineUsers.push(userJoined);
+  }
   socket.emit("get_online_users", onlineUsers);
   socket.broadcast.emit("get_online_users", onlineUsers);
   socket.on("disconnect", () => {
