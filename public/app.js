@@ -35,3 +35,11 @@ socket.on("get_online_users", (usersOnline) => {
   console.log(usersOnline);
   usersBlockGenerator(usersOnline);
 });
+
+socket.on("already_online", () => {
+  const alertBoxes = document.querySelectorAll(".alerts");
+  alertBoxes.forEach((alertBox) => {
+    alertBox.classList.remove("hidden");
+    alertBox.classList.add("fixed");
+  });
+});
