@@ -76,6 +76,13 @@ io.on("connection", (socket) => {
   }
   socket.emit("get_online_users", onlineUsers);
   socket.broadcast.emit("get_online_users", onlineUsers);
+  socket.on("private_message", ({ toUserId, message }) => {
+    const toUser = onlineUsers.find((user) => user.userId === toUserId);
+    io.to(toUser.id).emit("private_message", {
+      fromUserId: socket.userId,
+      message
+    });
+  });
   socket.on("disconnect", () => {
     onlineUsers = onlineUsers.filter((user) => user.id !== socket.id);
     socket.broadcast.emit("get_online_users", onlineUsers);
