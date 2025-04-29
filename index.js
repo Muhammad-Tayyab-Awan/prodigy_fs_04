@@ -2,10 +2,13 @@ const dotenv = require("dotenv").config();
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const express = require("express");
+const http = require("http");
+const socketIO = require("socket.io");
 const path = require("path");
 const connectDB = require("./utils/connectDB");
 const authRouter = require("./routes/auth");
 const verifyLogin = require("./middlewares/verifyLogin");
+const verifySocketLogin = require("./middlewares/VerifySocketLogin");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -44,7 +47,28 @@ app.all(/.*/, (req, res) => {
   });
 });
 
-app.listen(PORT, async () => {
+const server = http.createServer(app);
+const io = socketIO(server, {
+  cors: {
+    origin: "/"
+  }
+});
+
+io.use(verifySocketLogin);
+
+let onlineUsers = [];
+
+io.on("connection", (socket) => {
+  console.log("Connected", socket.username);
+  const userJoined = {
+    username: socket.username,
+    userId: socket.userId,
+    id: socket.id
+  };
+  onlineUsers.push(userJoined);
+});
+
+server.listen(PORT, async () => {
   console.clear();
   await connectDB();
   console.log(`Server running on http://localhost:${PORT}`);
