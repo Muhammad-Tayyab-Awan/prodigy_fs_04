@@ -17,4 +17,8 @@ html
         form(class="h-[10%] w-full bg-white flex items-center",id="message-form")
           textarea(placeholder="Enter message here",maxlength=150,class="w-full h-full focus-visible:outline-hidden p-2 resize-none bg-yellow-200 text-sm",name="message",required)
           input(type="image",src="/send.svg",class="h-full p-1 bg-yellow-200 focus-visible:outline-hidden")
-    div(class='bg-[#f57c50] h-full w-[20%]') hi
+    div(class='bg-[#f57c50] h-full w-[20%] overflow-y-auto relative')
+      h1(class="text-lg py-2 text-center w-full font-bold sticky top-0 bg-white") Online users
+      div(class="flex flex-col justify-center items-start gap-2 w-full p-2",id="online-users")
+        
+
