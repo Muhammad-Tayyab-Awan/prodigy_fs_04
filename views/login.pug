@@ -3,9 +3,15 @@ html
     title Login Now
     link(rel="shortcut icon" href="/icon.svg" type="image/svg")
     link(rel="stylesheet" href="/styles.css")
-  body
-    h1 Login Now
-    form(method="POST",action="/auth/login")
-      input(type="text",placeholder="Enter username",name="username",required)
-      input(type="password",placeholder="Enter password",name="password",required)
-      button(type="submit") Login
+    meta(charset='UTF-8')
+    meta(name='viewport' content='width=device-width, initial-scale=1.0')
+    script(src='https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4')
+  body.flex.bg-pink-300.justify-evenly.items-center.w-screen.h-screen
+    img.rounded-xl.shadow-md.shadow-black(src='/chatting.png' class='w-[40%] h-[80%]')
+    form.bg-white.rounded-xl.shadow-md.shadow-black.flex.flex-col.justify-center.items-center.gap-10(action='/auth/login' method='POST' class='w-[40%] h-[80%]')
+      h1.text-xl.font-medium Login now
+      input.bg-pink-300.p-3.rounded-lg.text-center(type='text' name='username' placeholder='Enter username' required='' class='w-[80%] focus-visible:outline-none')
+      input.bg-pink-300.p-3.rounded-lg.text-center(type='password' name='password' placeholder='Enter password' required='' class='w-[80%] focus-visible:outline-none')
+      button.bg-black.text-white.font-sm.font-medium.py-1.px-2.rounded-md(type='submit') Login
+      p.text-sm Don&apos;t have an account? 
+        a.font-medium.cursor-pointer(href='/auth/register') Register now
