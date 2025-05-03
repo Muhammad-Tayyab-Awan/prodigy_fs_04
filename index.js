@@ -79,6 +79,7 @@ io.on("connection", (socket) => {
   socket.on("private_message", ({ toUserId, message }) => {
     const toUser = onlineUsers.find((user) => user.userId === toUserId);
     io.to(toUser.id).emit("private_message", {
+      fromUsername: socket.username,
       fromUserId: socket.userId,
       message
     });
