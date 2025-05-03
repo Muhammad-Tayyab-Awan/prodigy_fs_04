@@ -187,3 +187,18 @@ socket.on("private_message", (data) => {
     genMessage(data.message, "start");
   }
 });
+
+socket.on("user_offline", () => {
+  const alertBoxes = document.querySelectorAll(".user_status");
+  const closeBtn = alertBoxes[1].querySelector("img");
+  closeBtn.addEventListener("click", () => {
+    alertBoxes[1].classList.remove("flex");
+    alertBoxes.forEach((alertBox) => {
+      alertBox.classList.add("hidden");
+    });
+  });
+  alertBoxes[1].classList.add("flex");
+  alertBoxes.forEach((alertBox) => {
+    alertBox.classList.remove("hidden");
+  });
+});
