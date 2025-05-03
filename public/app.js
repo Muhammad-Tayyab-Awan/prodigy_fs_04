@@ -32,6 +32,7 @@ notificationHandler.forEach((notification) => {
       notificationNode.addEventListener("click", () => {
         receiver = notificationData.fromUserId;
         chattingWith.innerText = `You are chatting with ${notificationData.fromUsername.toLowerCase()}`;
+        messageBox.innerHTML = "";
         notificationsData = notificationsData.filter((ntnData) => {
           return ntnData.fromUserId !== notificationData.fromUserId;
         });
@@ -43,7 +44,6 @@ notificationHandler.forEach((notification) => {
           box.classList.toggle("hidden");
           box.classList.toggle("fixed");
         });
-        messageBox.innerHTML = "";
         notificationData.messages.forEach((message) => {
           genMessage(message, "start");
         });
@@ -66,8 +66,11 @@ function usersBlockGenerator(onlineUsers) {
     const outerNode = genUserBlock(user.userId);
     outerNode.appendChild(nameNode);
     outerNode.addEventListener("click", () => {
-      receiver = user.userId;
-      chattingWith.innerText = `You are chatting with ${user.username.toLowerCase()}`;
+      if (receiver !== user.userId) {
+        receiver = user.userId;
+        chattingWith.innerText = `You are chatting with ${user.username.toLowerCase()}`;
+        messageBox.innerHTML = "";
+      }
     });
     onlineUsersParent.appendChild(outerNode);
   }
