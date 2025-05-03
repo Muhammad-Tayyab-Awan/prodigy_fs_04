@@ -78,11 +78,15 @@ io.on("connection", (socket) => {
   socket.broadcast.emit("get_online_users", onlineUsers);
   socket.on("private_message", ({ toUserId, message }) => {
     const toUser = onlineUsers.find((user) => user.userId === toUserId);
-    io.to(toUser.id).emit("private_message", {
-      fromUsername: socket.username,
-      fromUserId: socket.userId,
-      message
-    });
+    if (toUser === undefined) {
+      socket.emit("user_offline");
+    } else {
+      io.to(toUser.id).emit("private_message", {
+        fromUsername: socket.username,
+        fromUserId: socket.userId,
+        message
+      });
+    }
   });
   socket.on("disconnect", () => {
     onlineUsers = onlineUsers.filter((user) => user.id !== socket.id);
