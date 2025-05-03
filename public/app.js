@@ -10,7 +10,7 @@ const allNotifications = document.querySelector("#all-notifications");
 const chatroomSetter = document.querySelector("#set_chatroom");
 chatroomSetter.addEventListener("click", () => {
   if (receiver !== "baat-cheet") {
-    receiver = user.userId;
+    receiver = "baat-cheet";
     chattingWith.innerText = "You are in public chat room";
     messageBox.innerHTML = "";
   }
