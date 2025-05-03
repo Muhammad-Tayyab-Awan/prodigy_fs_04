@@ -4,6 +4,61 @@ let receiver = "baat-cheet";
 
 const onlineUsersParent = document.querySelector("#online-users");
 const chattingWith = document.querySelector("#chatting-with");
+const notificationHandler = document.querySelectorAll(".notification_btn");
+const notifications = document.querySelectorAll(".notifications");
+const allNotifications = document.querySelector("#all-notifications");
+notificationHandler.forEach((notification) => {
+  allNotifications.innerHTML = "";
+  let notificationsData = localStorage.getItem("notifications");
+  notificationsData = JSON.parse(notificationsData);
+  if (notificationsData) {
+    notificationsData.forEach((notificationData) => {
+      const notificationNode = document.createElement("div");
+      notificationNode.classList.add(
+        "bg-purple-300",
+        "w-full",
+        "rounded-lg",
+        "p-2",
+        "cursor-pointer"
+      );
+      notificationNode.id = notificationData.fromUserId;
+      notificationNode.innerText = `You received ${
+        notificationData.messageCount === 1
+          ? "a message"
+          : notificationData.messageCount + " messages"
+      } from ${notificationData.fromUsername} at ${new Date(
+        notificationData.time
+      ).toLocaleString()}`;
+      notificationNode.addEventListener("click", () => {
+        receiver = notificationData.fromUserId;
+        chattingWith.innerText = `You are chatting with ${notificationData.fromUsername.toLowerCase()}`;
+        notificationsData = notificationsData.filter((ntnData) => {
+          return ntnData.fromUserId !== notificationData.fromUserId;
+        });
+        localStorage.setItem(
+          "notifications",
+          JSON.stringify(notificationsData)
+        );
+        notifications.forEach((box) => {
+          box.classList.toggle("hidden");
+          box.classList.toggle("fixed");
+        });
+        messageBox.innerHTML = "";
+        notificationData.messages.forEach((message) => {
+          genMessage(message, "start");
+        });
+      });
+      allNotifications.appendChild(notificationNode);
+    });
+  }
+  notification.addEventListener("click", () => {
+    notifications.forEach((box) => {
+      box.classList.toggle("hidden");
+      box.classList.toggle("fixed");
+    });
+  });
+});
+
 function usersBlockGenerator(onlineUsers) {
   onlineUsersParent.innerHTML = "";
   for (const user of onlineUsers) {
@@ -83,5 +138,52 @@ socket.on("already_online", () => {
 });
 
 socket.on("private_message", (data) => {
-  receiver === data.fromUserId ? genMessage(data.message, "start") : "";
+  if (receiver !== data.fromUserId) {
+    let notificationData = localStorage.getItem("notifications");
+    notificationData = JSON.parse(notificationData);
+    if (!notificationData) {
+      localStorage.setItem(
+        "notifications",
+        JSON.stringify([
+          {
+            ...data,
+            messages: [data.message],
+            messageCount: 1,
+            status: "unread",
+            time: Date.now()
+          }
+        ])
+      );
+    } else {
+      if (
+        notificationData.filter(
+          (ntnData) => ntnData.fromUserId === data.fromUserId
+        ).length > 0
+      ) {
+        notificationData = notificationData.map((ntnData) => {
+          if (ntnData.fromUserId === data.fromUserId) {
+            return {
+              ...ntnData,
+              messages: [...ntnData.messages, data.message],
+              messageCount: ntnData.messageCount + 1,
+              time: Date.now()
+            };
+          } else {
+            return ntnData;
+          }
+        });
+      } else {
+        notificationData.push({
+          ...data,
+          messages: [data.message],
+          messageCount: 1,
+          status: "unread",
+          time: Date.now()
+        });
+      }
+      localStorage.setItem("notifications", JSON.stringify(notificationData));
+    }
+  } else {
+    genMessage(data.message, "start");
+  }
 });
