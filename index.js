@@ -88,6 +88,13 @@ io.on("connection", (socket) => {
       });
     }
   });
+  socket.on("public_message", ({ message }) => {
+    socket.broadcast.emit("public_message", {
+      fromUsername: socket.username,
+      message
+    });
+  });
+
   socket.on("disconnect", () => {
     onlineUsers = onlineUsers.filter((user) => user.id !== socket.id);
     socket.broadcast.emit("get_online_users", onlineUsers);
