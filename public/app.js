@@ -120,11 +120,23 @@ const genMessage = (message, pos) => {
 messageForm.addEventListener("submit", (evt) => {
   evt.preventDefault();
   genMessage(messageInput.value.trim(), "end");
-  socket.emit("private_message", {
-    toUserId: receiver,
-    message: messageInput.value.trim()
-  });
+  if (receiver === "baat-cheet") {
+    socket.emit("public_message", {
+      message: messageInput.value.trim()
+    });
+  } else {
+    socket.emit("private_message", {
+      toUserId: receiver,
+      message: messageInput.value.trim()
+    });
+  }
   messageInput.value = "";
+});
+
+socket.on("public_message", (data) => {
+  if (receiver === "baat-cheet") {
+    genMessage(data.message, "start");
+  }
 });
 
 socket.on("get_online_users", (usersOnline) => {
