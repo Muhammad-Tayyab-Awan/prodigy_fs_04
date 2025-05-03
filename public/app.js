@@ -19,7 +19,7 @@ notificationHandler.forEach((notification) => {
   allNotifications.innerHTML = "";
   let notificationsData = localStorage.getItem("notifications");
   notificationsData = JSON.parse(notificationsData);
-  if (notificationsData) {
+  if (notificationsData && notificationsData.length > 0) {
     notificationsData.forEach((notificationData) => {
       const notificationNode = document.createElement("div");
       notificationNode.classList.add(
@@ -60,6 +60,17 @@ notificationHandler.forEach((notification) => {
       });
       allNotifications.appendChild(notificationNode);
     });
+  } else {
+    const notificationNode = document.createElement("div");
+    notificationNode.classList.add(
+      "bg-purple-300",
+      "w-full",
+      "rounded-lg",
+      "p-2",
+      "cursor-pointer"
+    );
+    notificationNode.innerText = "No notifications";
+    allNotifications.appendChild(notificationNode);
   }
   notification.addEventListener("click", () => {
     notifications.forEach((box) => {
