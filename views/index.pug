@@ -22,7 +22,9 @@ html
       div(class="sticky top-0 w-full text-center py-2 text-xl bg-white/50 backdrop-blur-[2px] shadow-sm shadow-black") Enjoy chat with unlimited users
         div(class="py-0.5 px-2 h-auto w-full flex justify-between items-center")
           h1(class="text-xl font-medium text-[#f57c50]",id=`${userId}`)= `Hi, ${username}`
-          a(href="/auth/logout" class="bg-black text-white p-1 rounded-sm cursor-pointer text-sm") Logout
+          div
+            p(class="inline-block bg-black text-white p-1 rounded-sm cursor-pointer text-sm mr-2",id="set_chatroom") Public Chatroom
+            a(href="/auth/logout" class="bg-black text-white p-1 rounded-sm cursor-pointer text-sm") Logout
       div(class='flex flex-col justify-center items-center h-[calc(100vh-4.75rem)] w-full')
         div(class="h-[90%] w-full overflow-y-auto overflow-x-hidden relative",id="message-box")
           div(class="sticky top-0 w-full bg-black/50") 
