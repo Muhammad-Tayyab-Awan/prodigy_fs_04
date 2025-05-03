@@ -7,6 +7,14 @@ const chattingWith = document.querySelector("#chatting-with");
 const notificationHandler = document.querySelectorAll(".notification_btn");
 const notifications = document.querySelectorAll(".notifications");
 const allNotifications = document.querySelector("#all-notifications");
+const chatroomSetter = document.querySelector("#set_chatroom");
+chatroomSetter.addEventListener("click", () => {
+  if (receiver !== "baat-cheet") {
+    receiver = user.userId;
+    chattingWith.innerText = "You are in public chat room";
+    messageBox.innerHTML = "";
+  }
+});
 notificationHandler.forEach((notification) => {
   allNotifications.innerHTML = "";
   let notificationsData = localStorage.getItem("notifications");
@@ -30,9 +38,11 @@ notificationHandler.forEach((notification) => {
         notificationData.time
       ).toLocaleString()}`;
       notificationNode.addEventListener("click", () => {
-        receiver = notificationData.fromUserId;
-        chattingWith.innerText = `You are chatting with ${notificationData.fromUsername.toLowerCase()}`;
-        messageBox.innerHTML = "";
+        if (receiver !== notificationData.fromUserId) {
+          receiver = notificationData.fromUserId;
+          chattingWith.innerText = `You are chatting with ${notificationData.fromUsername.toLowerCase()}`;
+          messageBox.innerHTML = "";
+        }
         notificationsData = notificationsData.filter((ntnData) => {
           return ntnData.fromUserId !== notificationData.fromUserId;
         });
