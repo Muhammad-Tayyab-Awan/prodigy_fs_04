@@ -324,3 +324,10 @@ socket.on("user_offline", () => {
     alertBox.classList.remove("hidden");
   });
 });
+const hamburger = document.querySelector("#hamburger");
+const sidebar = document.querySelector("#sidebar");
+
+hamburger.addEventListener("click", () => {
+  console.log("clicked");
+  sidebar.classList.toggle("hidden");
+});
