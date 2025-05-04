@@ -149,11 +149,11 @@ const genMessage = (message, pos) => {
 
 messageForm.addEventListener("submit", (evt) => {
   evt.preventDefault();
-  genMessage(messageInput.value.trim(), "end");
   if (receiver === "baat-cheet") {
     socket.emit("public_message", {
       message: messageInput.value.trim()
     });
+    genMessage(messageInput.value.trim(), "end");
   } else {
     socket.emit("private_message", {
       toUserId: receiver,
@@ -161,6 +161,10 @@ messageForm.addEventListener("submit", (evt) => {
     });
   }
   messageInput.value = "";
+});
+
+socket.on("message_sent", ({ message }) => {
+  genMessage(message, "end");
 });
 
 socket.on("public_message", (data) => {

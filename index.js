@@ -81,6 +81,7 @@ io.on("connection", (socket) => {
     if (toUser === undefined) {
       socket.emit("user_offline");
     } else {
+      socket.emit("message_sent", { message });
       io.to(toUser.id).emit("private_message", {
         fromUsername: socket.username,
         fromUserId: socket.userId,
