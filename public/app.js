@@ -2,6 +2,12 @@ const socket = io("/");
 
 let receiver = "baat-cheet";
 
+let notificationsData = localStorage.getItem("notifications");
+notificationsData = JSON.parse(notificationsData);
+if (!notificationsData || !(notificationsData.length > 0)) {
+  notificationsData = [];
+}
+
 const onlineUsersParent = document.querySelector("#online-users");
 const chattingWith = document.querySelector("#chatting-with");
 const notificationHandler = document.querySelectorAll(".notification_btn");
@@ -16,11 +22,50 @@ chatroomSetter.addEventListener("click", () => {
   }
 });
 notificationHandler.forEach((notification) => {
-  allNotifications.innerHTML = "";
-  let notificationsData = localStorage.getItem("notifications");
-  notificationsData = JSON.parse(notificationsData);
-  if (notificationsData && notificationsData.length > 0) {
-    notificationsData.forEach((notificationData) => {
+  notification.addEventListener("click", () => {
+    allNotifications.innerHTML = "";
+    if (notificationsData && notificationsData.length > 0) {
+      notificationsData.forEach((notificationData) => {
+        const notificationNode = document.createElement("div");
+        notificationNode.classList.add(
+          "bg-purple-300",
+          "w-full",
+          "rounded-lg",
+          "p-2",
+          "cursor-pointer"
+        );
+        notificationNode.id = notificationData.fromUserId;
+        notificationNode.innerText = `You received ${
+          notificationData.messageCount === 1
+            ? "a message"
+            : notificationData.messageCount + " messages"
+        } from ${notificationData.fromUsername} at ${new Date(
+          notificationData.time
+        ).toLocaleString()}`;
+        notificationNode.addEventListener("click", () => {
+          if (receiver !== notificationData.fromUserId) {
+            receiver = notificationData.fromUserId;
+            chattingWith.innerText = `You are chatting with ${notificationData.fromUsername.toLowerCase()}`;
+            messageBox.innerHTML = "";
+          }
+          notificationsData = notificationsData.filter((ntnData) => {
+            return ntnData.fromUserId !== notificationData.fromUserId;
+          });
+          localStorage.setItem(
+            "notifications",
+            JSON.stringify(notificationsData)
+          );
+          notifications.forEach((box) => {
+            box.classList.toggle("hidden");
+            box.classList.toggle("fixed");
+          });
+          notificationData.messages.forEach((message) => {
+            genMessage(message, "start");
+          });
+        });
+        allNotifications.appendChild(notificationNode);
+      });
+    } else {
       const notificationNode = document.createElement("div");
       notificationNode.classList.add(
         "bg-purple-300",
@@ -29,50 +74,9 @@ notificationHandler.forEach((notification) => {
         "p-2",
         "cursor-pointer"
       );
-      notificationNode.id = notificationData.fromUserId;
-      notificationNode.innerText = `You received ${
-        notificationData.messageCount === 1
-          ? "a message"
-          : notificationData.messageCount + " messages"
-      } from ${notificationData.fromUsername} at ${new Date(
-        notificationData.time
-      ).toLocaleString()}`;
-      notificationNode.addEventListener("click", () => {
-        if (receiver !== notificationData.fromUserId) {
-          receiver = notificationData.fromUserId;
-          chattingWith.innerText = `You are chatting with ${notificationData.fromUsername.toLowerCase()}`;
-          messageBox.innerHTML = "";
-        }
-        notificationsData = notificationsData.filter((ntnData) => {
-          return ntnData.fromUserId !== notificationData.fromUserId;
-        });
-        localStorage.setItem(
-          "notifications",
-          JSON.stringify(notificationsData)
-        );
-        notifications.forEach((box) => {
-          box.classList.toggle("hidden");
-          box.classList.toggle("fixed");
-        });
-        notificationData.messages.forEach((message) => {
-          genMessage(message, "start");
-        });
-      });
+      notificationNode.innerText = "No notifications";
       allNotifications.appendChild(notificationNode);
-    });
-  } else {
-    const notificationNode = document.createElement("div");
-    notificationNode.classList.add(
-      "bg-purple-300",
-      "w-full",
-      "rounded-lg",
-      "p-2",
-      "cursor-pointer"
-    );
-    notificationNode.innerText = "No notifications";
-    allNotifications.appendChild(notificationNode);
-  }
-  notification.addEventListener("click", () => {
+    }
     notifications.forEach((box) => {
       box.classList.toggle("hidden");
       box.classList.toggle("fixed");
@@ -175,9 +179,14 @@ socket.on("already_online", () => {
 
 socket.on("private_message", (data) => {
   if (receiver !== data.fromUserId) {
-    let notificationData = localStorage.getItem("notifications");
-    notificationData = JSON.parse(notificationData);
-    if (!notificationData) {
+    if (!(notificationsData && notificationsData.length > 0)) {
+      notificationsData.push({
+        ...data,
+        messages: [data.message],
+        messageCount: 1,
+        status: "unread",
+        time: Date.now()
+      });
       localStorage.setItem(
         "notifications",
         JSON.stringify([
@@ -192,11 +201,11 @@ socket.on("private_message", (data) => {
       );
     } else {
       if (
-        notificationData.filter(
+        notificationsData.filter(
           (ntnData) => ntnData.fromUserId === data.fromUserId
         ).length > 0
       ) {
-        notificationData = notificationData.map((ntnData) => {
+        notificationsData = notificationsData.map((ntnData) => {
           if (ntnData.fromUserId === data.fromUserId) {
             return {
               ...ntnData,
@@ -209,7 +218,7 @@ socket.on("private_message", (data) => {
           }
         });
       } else {
-        notificationData.push({
+        notificationsData.push({
           ...data,
           messages: [data.message],
           messageCount: 1,
@@ -217,7 +226,7 @@ socket.on("private_message", (data) => {
           time: Date.now()
         });
       }
-      localStorage.setItem("notifications", JSON.stringify(notificationData));
+      localStorage.setItem("notifications", JSON.stringify(notificationsData));
     }
   } else {
     genMessage(data.message, "start");
