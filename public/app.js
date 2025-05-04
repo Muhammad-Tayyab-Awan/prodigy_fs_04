@@ -91,18 +91,22 @@ notificationHandler.forEach((notification) => {
 
 function usersBlockGenerator(onlineUsers) {
   onlineUsersParent.innerHTML = "";
-  for (const user of onlineUsers) {
-    const nameNode = genUsername(user.username);
-    const outerNode = genUserBlock(user.userId);
-    outerNode.appendChild(nameNode);
-    outerNode.addEventListener("click", () => {
-      if (receiver !== user.userId) {
-        receiver = user.userId;
-        chattingWith.innerText = `You are chatting with ${user.username.toLowerCase()}`;
-        messageBox.innerHTML = "";
-      }
-    });
-    onlineUsersParent.appendChild(outerNode);
+  if (onlineUsers.length > 0) {
+    for (const user of onlineUsers) {
+      const nameNode = genUsername(user.username);
+      const outerNode = genUserBlock(user.userId);
+      outerNode.appendChild(nameNode);
+      outerNode.addEventListener("click", () => {
+        if (receiver !== user.userId) {
+          receiver = user.userId;
+          chattingWith.innerText = `You are chatting with ${user.username.toLowerCase()}`;
+          messageBox.innerHTML = "";
+        }
+      });
+      onlineUsersParent.appendChild(outerNode);
+    }
+  } else {
+    onlineUsersParent.innerText = "No user online";
   }
 }
 const genUserBlock = (userId) => {
