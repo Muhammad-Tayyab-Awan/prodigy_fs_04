@@ -129,6 +129,26 @@ const messageBox = document.querySelector("#all-messages");
 const messageForm = document.querySelector("#message-form");
 const messageInput = messageForm.querySelector("textarea");
 
+messageInput.addEventListener("keypress", (evt) => {
+  if (evt.code.toLowerCase() === "enter") {
+    evt.preventDefault();
+    if (messageForm.reportValidity()) {
+      if (receiver === "baat-cheet") {
+        socket.emit("public_message", {
+          message: messageInput.value.trim()
+        });
+        genMessage(messageInput.value.trim(), "end");
+      } else {
+        socket.emit("private_message", {
+          toUserId: receiver,
+          message: messageInput.value.trim()
+        });
+      }
+      messageInput.value = "";
+    }
+  }
+});
+
 const genMessage = (message, pos) => {
   const newMessage = document.createElement("div");
   newMessage.classList.add(
