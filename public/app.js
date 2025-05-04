@@ -147,6 +147,41 @@ const genMessage = (message, pos) => {
   messageBox.appendChild(newMessage);
 };
 
+const genPublicMessage = (message, pos, fromId, fromUsername) => {
+  const newMessage = document.createElement("div");
+  newMessage.classList.add(
+    "bg-white",
+    "text-sm",
+    "text-black",
+    "p-1",
+    "rounded-sm",
+    "max-w-[50%]",
+    "w-fit",
+    "max-h-18",
+    "h-fit",
+    "flex",
+    "flex-col",
+    "justify-start",
+    "items-starts",
+    "gap-1",
+    `self-${pos}`
+  );
+  const messageReceived = document.createElement("p");
+  messageReceived.innerText = message.trim();
+  const fromUser = document.createElement("div");
+  fromUser.innerText = fromUsername;
+  fromUser.classList.add("text-base", "font-medium", "cursor-pointer");
+  fromUser.id = fromId;
+  fromUser.addEventListener("click", () => {
+    receiver = fromId;
+    chattingWith.innerText = `You are chatting with ${fromUsername.toLowerCase()}`;
+    messageBox.innerHTML = "";
+  });
+  newMessage.appendChild(fromUser);
+  newMessage.appendChild(messageReceived);
+  messageBox.appendChild(newMessage);
+};
+
 messageForm.addEventListener("submit", (evt) => {
   evt.preventDefault();
   if (receiver === "baat-cheet") {
@@ -169,7 +204,7 @@ socket.on("message_sent", ({ message }) => {
 
 socket.on("public_message", (data) => {
   if (receiver === "baat-cheet") {
-    genMessage(data.message, "start");
+    genPublicMessage(data.message, "start", data.fromId, data.fromUsername);
   }
 });
 

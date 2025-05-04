@@ -91,6 +91,7 @@ io.on("connection", (socket) => {
   });
   socket.on("public_message", ({ message }) => {
     socket.broadcast.emit("public_message", {
+      fromId: socket.userId,
       fromUsername: socket.username,
       message
     });
