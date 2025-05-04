@@ -2,12 +2,14 @@ const socket = io("/");
 
 let receiver = "baat-cheet";
 
+const notificationPresent = document.querySelector("#notification-present");
 let notificationsData = localStorage.getItem("notifications");
 notificationsData = JSON.parse(notificationsData);
 if (!notificationsData || !(notificationsData.length > 0)) {
   notificationsData = [];
+} else {
+  notificationPresent.classList.toggle("hidden");
 }
-
 const onlineUsersParent = document.querySelector("#online-users");
 const chattingWith = document.querySelector("#chatting-with");
 const notificationHandler = document.querySelectorAll(".notification_btn");
@@ -51,6 +53,9 @@ notificationHandler.forEach((notification) => {
           notificationsData = notificationsData.filter((ntnData) => {
             return ntnData.fromUserId !== notificationData.fromUserId;
           });
+          notificationsData.length > 0
+            ? notificationPresent.classList.remove("hidden")
+            : notificationPresent.classList.add("hidden");
           localStorage.setItem(
             "notifications",
             JSON.stringify(notificationsData)
@@ -179,6 +184,7 @@ socket.on("already_online", () => {
 
 socket.on("private_message", (data) => {
   if (receiver !== data.fromUserId) {
+    notificationPresent.classList.remove("hidden");
     if (!(notificationsData && notificationsData.length > 0)) {
       notificationsData.push({
         ...data,

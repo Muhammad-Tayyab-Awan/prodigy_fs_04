@@ -36,7 +36,9 @@ html
     div(class='bg-[#f57c50] h-full w-[20%] overflow-y-auto relative')
       h1(class="text-lg p-2 text-center w-full font-bold sticky top-0 bg-white flex justify-between item-center") 
         span Online users
-        img(class="h-5 notification_btn",src="/notification.svg")
+        div.relative
+          img(class="h-5 notification_btn",src="/notification.svg")
+          div#notification-present.absolute.h-2.w-2.bg-red-500.rounded-full.right-0.top-0.z-10.animate-pulse.hidden
       div(class="flex flex-col justify-center items-start gap-2 w-full p-2",id="online-users")
     script(src="/app.js")
 
