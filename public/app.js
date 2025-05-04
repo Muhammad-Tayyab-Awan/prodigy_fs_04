@@ -155,12 +155,13 @@ const genMessage = (message, pos) => {
     "bg-white",
     "text-sm",
     "text-black",
-    "p-1",
+    "p-2",
     "rounded-sm",
     "max-w-[50%]",
     "w-fit",
-    "max-h-18",
-    "h-fit",
+    "h-auto",
+    "overflow-y-auto",
+    "overflow-x-hidden",
     `self-${pos}`
   );
   newMessage.innerText = message.trim();
@@ -173,16 +174,17 @@ const genPublicMessage = (message, pos, fromId, fromUsername) => {
     "bg-white",
     "text-sm",
     "text-black",
-    "p-1",
+    "p-2",
     "rounded-sm",
     "max-w-[50%]",
     "w-fit",
-    "max-h-18",
-    "h-fit",
+    "h-auto",
     "flex",
     "flex-col",
     "justify-start",
     "items-starts",
+    "overflow-y-auto",
+    "overflow-x-hidden",
     "gap-1",
     `self-${pos}`
   );
@@ -190,7 +192,17 @@ const genPublicMessage = (message, pos, fromId, fromUsername) => {
   messageReceived.innerText = message.trim();
   const fromUser = document.createElement("div");
   fromUser.innerText = fromUsername;
-  fromUser.classList.add("text-base", "font-medium", "cursor-pointer");
+  fromUser.classList.add(
+    "text-sm",
+    "font-medium",
+    "cursor-pointer",
+    "p-1",
+    "bg-black/50",
+    "text-white",
+    "rounded-md",
+    "inline-block",
+    "w-fit"
+  );
   fromUser.id = fromId;
   fromUser.addEventListener("click", () => {
     receiver = fromId;
